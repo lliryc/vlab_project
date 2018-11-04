@@ -1,0 +1,480 @@
+<!doctype html>
+{% load staticfiles %}
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
+    <title>VLAB - Новый прибор</title>
+
+    <!-- Page styles -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:regular,bold,italic,thin,light,bolditalic,black,medium&amp;lang=en">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <link rel="stylesheet" href="https://code.getmdl.io/1.3.0/material.min.css">
+    <link rel="stylesheet" href="styles.css">
+    <style>
+    .body-ground{
+        background: url("{% static 'images/lab_bg.jpg' %}");
+        background-repeat: no-repeat;
+        background-size: auto;
+    }
+    .header-color
+    {
+        background: #00B0F0;
+    }
+    .main-color
+    {
+        background: #010101;
+    }
+    .white-font
+    {
+        color: white;
+    }
+    .mdl-textfield {
+        width: 70%;
+    }
+
+    .mdl-textfield .mdl-pseudo-button {
+        position: absolute;
+        bottom: 20px;
+    }
+    .mdl-pseudo-button {
+        background: 0 0;
+        border: none;
+        border-radius: 50%;
+        color: #3f51b5;
+        position: relative;
+        margin: 0;
+        display: inline-block;
+        font-family: "Roboto","Helvetica","Arial",sans-serif;
+        text-transform: uppercase;
+        letter-spacing: 0;
+        overflow: hidden;
+        /* will-change: box-shadow; */
+        outline: none;
+        cursor: pointer;
+        text-decoration: none;
+        text-align: center;
+        vertical-align: middle;
+    }
+    .mdl-button--file input {
+      cursor: pointer;
+      height: 100%;
+      right: 0;
+      opacity: 0;
+      position: absolute;
+      top: 0;
+      width: 300px;
+      z-index: 4;
+    }
+    .mdl-textfield .mdl-button--info{
+        right: 0px;
+    }
+
+    .mdl-textfield--file .mdl-textfield__input {
+      box-sizing: border-box;
+      width: calc(100% - 80px);
+    }
+
+    .mdl-textfield--file .mdl-button--file {
+      right: 40px;
+    }
+
+    .mdl-textfield--file .mdl-button--file .attach {
+
+    }
+
+    .mdl-textfield--file .mdl-button--file {
+
+    }
+    .center-items {
+        justify-content: center;
+    }
+    .lab-qualification{
+       max-width: 900px;
+       margin:auto;
+    }
+    /*
+    forms
+    */
+    .reg-form {
+        max-width: 550px;
+        margin: auto;
+        text-align: center;
+    }
+    .form-layout__content {
+        margin-left:auto;
+        margin-right: auto;
+        margin-top: 1em;
+    }
+    /*
+    modal dialog
+    */
+    .dialog-container,
+    .loading-container {
+        position: absolute;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        overflow: scroll;
+        background: rgba(0, 0, 0, 0.4);
+        z-index: 9999;
+        opacity: 0;
+        -webkit-transition: opacity 400ms ease-in;
+        -moz-transition: opacity 400ms ease-in;
+        transition: opacity 400ms ease-in;
+    }
+
+    .dialog-container > div {
+        position: relative;
+        width: 90%;
+        max-width: 500px;
+        min-height: 25px;
+        margin: 10% auto;
+        z-index: 99999;
+        padding: 16px 16px 0;
+    }
+
+    .dialog-button-bar {
+        text-align: right;
+        margin-top: 8px;
+    }
+
+    .loading-container > div {
+        position: relative;
+        width: 50px;
+        height: 50px;
+        margin: 10% auto;
+        z-index: 99999;
+    }
+
+    .loading-container > div > div {
+        width: 100%;
+        height: 100%;
+    }
+
+    .section{
+        font-size: 18px;
+        font-weight: 400;
+        margin-top: 1.5em;
+        font-family: "Roboto","Helvetica","Arial",sans-serif;
+        color: blue;
+        line-height: normal;
+
+    }
+    .mdl-semitrans{
+        background-color:rgba(255, 255, 255, 0.8)!important;
+    }
+    .mdl-button--icon pie-color{
+        background: #00B0F0;
+    }
+    .lab-header > .mdl-layout__drawer-button{
+        background: #00B0F0;
+    }
+    .mdl-card-content{
+        margin-left: 15%;
+        margin-right: 15%;
+    }
+    footer.lab-footer{
+        color: white;
+        background-color: #00B0F0;
+    }
+    </style>
+    <script src="//code.jquery.com/jquery-3.1.1.min.js"></script>
+    <script type="text/javascript">
+        function showLoading() {
+            // remove existing loaders
+            $('.loading-container').remove();
+            $('<div id="orrsLoader" class="loading-container"><div><div class="mdl-spinner mdl-js-spinner is-active"></div></div></div>').appendTo("body");
+
+            componentHandler.upgradeElements($('.mdl-spinner').get());
+            setTimeout(function () {
+                $('#orrsLoader').css({opacity: 1});
+            }, 1);
+        }
+
+        function hideLoading() {
+            $('#orrsLoader').css({opacity: 0});
+            setTimeout(function () {
+                $('#orrsLoader').remove();
+            }, 400);
+        }
+
+        function showDialog(options) {
+            options = $.extend({
+                id: 'orrsDiag',
+                title: null,
+                text: null,
+                neutral: false,
+                negative: false,
+                positive: false,
+                cancelable: true,
+                contentStyle: null,
+                onLoaded: false,
+                onHidden: false,
+                hideOther: true
+            }, options);
+
+            if (options.hideOther) {
+                // remove existing dialogs
+                $('.dialog-container').remove();
+                $(document).unbind("keyup.dialog");
+            }
+
+            $('<div id="' + options.id + '" class="dialog-container"><div class="mdl-card mdl-semitrans mdl-shadow--16dp" id="' + options.id + '_content"></div></div>').appendTo("body");
+            var dialog = $('#' + options.id);
+            var content = dialog.find('.mdl-card');
+            if (options.contentStyle != null) content.css(options.contentStyle);
+            if (options.title != null) {
+                $('<h5>' + options.title + '</h5>').appendTo(content);
+            }
+            if (options.text != null) {
+                $('<p>' + options.text + '</p>').appendTo(content);
+            }
+            if (options.neutral || options.negative || options.positive) {
+                var buttonBar = $('<div class="mdl-card__actions dialog-button-bar"></div>');
+                if (options.neutral) {
+                    options.neutral = $.extend({
+                        id: 'neutral',
+                        title: 'Neutral',
+                        onClick: null
+                    }, options.neutral);
+                    var neuButton = $('<button class="mdl-button mdl-js-button mdl-js-ripple-effect" id="' + options.neutral.id + '">' + options.neutral.title + '</button>');
+                    neuButton.click(function (e) {
+                        e.preventDefault();
+                        if (options.neutral.onClick == null || !options.neutral.onClick(e))
+                            hideDialog(dialog, options.onHidden)
+                    });
+                    neuButton.appendTo(buttonBar);
+                }
+                if (options.negative) {
+                    options.negative = $.extend({
+                        id: 'negative',
+                        title: 'Cancel',
+                        onClick: null
+                    }, options.negative);
+                    var negButton = $('<button class="mdl-button mdl-js-button mdl-js-ripple-effect" id="' + options.negative.id + '">' + options.negative.title + '</button>');
+                    negButton.click(function (e) {
+                        e.preventDefault();
+                        if (options.negative.onClick == null || !options.negative.onClick(e))
+                            hideDialog(dialog, options.onHidden)
+                    });
+                    negButton.appendTo(buttonBar);
+                }
+                if (options.positive) {
+                    options.positive = $.extend({
+                        id: 'positive',
+                        title: 'OK',
+                        onClick: null
+                    }, options.positive);
+                    var posButton = $('<button class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect" id="' + options.positive.id + '">' + options.positive.title + '</button>');
+                    posButton.click(function (e) {
+                        e.preventDefault();
+                        if (options.positive.onClick == null || !options.positive.onClick(e))
+                            hideDialog(dialog, options.onHidden)
+                    });
+                    posButton.appendTo(buttonBar);
+                }
+                buttonBar.appendTo(content);
+            }
+            componentHandler.upgradeDom();
+            if (options.cancelable) {
+                dialog.click(function () {
+                    hideDialog(dialog, options.onHidden);
+                });
+                $(document).bind("keyup.dialog", function (e) {
+                    if (e.which == 27)
+                        hideDialog(dialog, options.onHidden);
+                });
+                content.click(function (e) {
+                    e.stopPropagation();
+                });
+            }
+            setTimeout(function () {
+                dialog.css({opacity: 1});
+                if (options.onLoaded)
+                    options.onLoaded();
+            }, 1);
+        }
+
+        function hideDialog(dialog, callback) {
+            $(document).unbind("keyup.dialog");
+            dialog.css({opacity: 0});
+            setTimeout(function () {
+                dialog.remove();
+                if (callback)
+                    callback();
+            }, 400);
+        }
+    </script>
+  </head>
+  <body class="body-ground">
+    <div class="mdl-layout mdl-js-layout mdl-layout--fixed-header">
+      <div class="lab-header mdl-layout__header mdl-layout__header--waterfall">
+        <div class="mdl-layout__header-row header-color">
+            <div>
+                <span class="lab-title mdl-layout-title">
+                  Оборудование
+                </span>
+            </div>
+          <!-- Add spacer, to align navigation to the right in desktop -->
+          <div class="lab-header-spacer mdl-layout-spacer"></div>
+          <!-- Navigation -->
+          <div class="lab-navigation-container">
+            <nav class="lab-navigation mdl-navigation">
+              <a class="mdl-navigation__link mdl-typography--text-uppercase" href="">Сервисы</a>
+              <a class="mdl-navigation__link mdl-typography--text-uppercase" href="">Фамилия И.О.</a>
+            </nav>
+          </div>
+          <button class="lab-more-button mdl-button mdl-js-button mdl-button--icon mdl-js-ripple-effect " id="more-button">
+            <i class="material-icons">more_vert</i>
+          </button>
+        </div>
+      </div>
+
+      <div class="lab-drawer mdl-layout__drawer white-font">
+        <nav class="mdl-navigation">
+          <a class="mdl-navigation__link" href="">Организация</a>
+          <span class="mdl-navigation__link">Оборудование</span>
+          <a class="mdl-navigation__link" href="">Исследования</a>
+          <a class="mdl-navigation__link" href="">Заказы</a>
+          <a class="mdl-navigation__link" href="">Ставки</a>
+          <a class="mdl-navigation__link" href="">Бронирования</a>
+          <a class="mdl-navigation__link" href="">Настройки</a>
+          <div class="android-drawer-separator"></div>
+          <a class="mdl-navigation__link white-font" href="">Аукционы</a>
+          <a class="mdl-navigation__link" href="">Заказчики</a>
+          <a class="mdl-navigation__link" href="">Лаборатории</a>
+          <a class="mdl-navigation__link" href="">Вопрос-ответ</a>
+        </nav>
+      </div>
+
+      <div class="lab-content mdl-layout__content">
+        <div class="lab-main-section">
+            <div class="mdl-grid lab-qualification-max-width lab-qualification">
+                <div class="mdl-cell mdl-cell--12-col mdl-card mdl-semitrans mdl-shadow--4dp">
+                    <div class="mdl-card__title">
+                        <h2 class="mdl-card__title-text">Новый прибор</h2>
+                    </div>
+                    <!--
+                    <div class="mdl-card__media">
+                        <img class="article-image" src=" images/contact-image.jpg" border="0" alt="">
+                    </div>
+                    -->
+                    <div class="mdl-card-content">
+                        <form class="" method="post" action="." enctype="multipart/form-data">
+                          {% csrf_token %}
+                            <p>
+                                <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                                  <input class="mdl-textfield__input" type="text" id="{{ form.name.id_for_label }}" name="{{ form.name.html_name }}" value="{{ form.name.value | default_if_none:"" }}" required autofocus>
+                                  <label class="mdl-textfield__label" for="{{ form.name.id_for_label }}">Название</label>
+                                  <span class="mdl-textfield__error">Введите название прибора</span>
+                                </div>
+                            </p>
+                            <p>
+                                <div class="mdl-textfield mdl-js-textfield mdl-textfield--file">
+                                  <input class="mdl-textfield__input upload-textfield" placeholder="Фото..." type="text" id="uploadDevicePhoto" readonly/>
+                                  <div class="mdl-button mdl-button--primary mdl-button--icon mdl-button--file">
+                                    <i class="material-icons attach" id="uploadDevicePhoto">attach_file</i>
+                                    <input type="file" class="upload-file" id="{{ form.img_url.id_for_label }}" name="{{ form.img_url.html_name }}" value="{{ form.img_url.value | default_if_none:"" }}" accept=".jpg, .jpeg, .png">
+                                  </div>
+                                  <div class="mdl-pseudo-button mdl-button--icon mdl-button--info">
+                                      <i class="material-icons" id="uploadDevicePhotoTt">info</i>
+                                  </div>
+                                </div>
+                                <div class="mdl-tooltip" for="uploadDevicePhotoTt">
+                                      Фото прибора
+                                </div>
+                            </p>
+                            <p>
+                                <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                                  <textarea class="mdl-textfield__input" type="text" rows= "3" id="{{ form.short_desc.id_for_label }}"  name="{{ form.short_desc.html_name }}" value="{{ form.short_desc.value | default_if_none:"" }}"></textarea>
+                                  <label class="mdl-textfield__label" for="{{ form.short_desc.id_for_label }}">Краткое описание</label>
+                                  <span class="mdl-textfield__error">Введите краткое описание прибора</span>
+                                </div>
+                            </p>
+                            <p>
+                                <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                                  <textarea class="mdl-textfield__input" type="text" rows= "10" id="{{ form.desc.id_for_label }}"  name="{{ form.desc.html_name }}" value="{{ form.desc.value | default_if_none:"" }}"></textarea>
+                                  <label class="mdl-textfield__label" for="{{ form.desc.id_for_label }}">Развернутое описание</label>
+                                  <span class="mdl-textfield__error">Развернуто опишите прибор</span>
+                                </div>
+                            </p>
+                            <p>
+                                <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                                  <input class="mdl-textfield__input" type="text" id="{{ form.manufacturer.id_for_label }}" name="{{ form.manufacturer.html_name }}" value="{{ form.manufacturer.value | default_if_none:"" }}">
+                                  <label class="mdl-textfield__label" for="{{ form.manufacturer.id_for_label }}">Производитель</label>
+                                  <span class="mdl-textfield__error">Укажите производителя</span>
+                                </div>
+                            </p>
+                            <p>
+                                <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                                  <input class="mdl-textfield__input" type="text" id="{{ form.year.id_for_label }}" name="{{ form.year.html_name }}" value="{{ form.year.value | default_if_none:"" }}">
+                                  <label class="mdl-textfield__label" for="{{ form.year.id_for_label }}">Год выпуска</label>
+                                  <span class="mdl-textfield__error">Укажите год выпуска</span>
+                                </div>
+                            </p>
+                            <input type="hidden" name="{{ form.lab.html_name }}" id="{{ form.lab.id_for_label }}" value="{{ form.lab.value | default_if_none:"" }}">
+                            <input type="hidden" name="{{ form.broken.html_name }}" id="{{ form.broken.id_for_label }}" value="{{ form.broken.value | default_if_none:"" }}">
+                            <p>
+                                {{ form.errors }}
+                            </p>
+                            <p>
+                                <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent" type="submit" data-upgraded=",MaterialButton,MaterialRipple">
+                                    Сохранить
+                                    <span class="mdl-button__ripple-container">
+                                        <span class="mdl-ripple"></span>
+                                    </span>
+                                </button>
+                                <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect" type="submit" data-upgraded=",MaterialButton,MaterialRipple">
+                                    Отмена
+                                    <span class="mdl-button__ripple-container">
+                                        <span class="mdl-ripple"></span>
+                                    </span>
+                                </button>
+                            </p>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <footer class="lab-footer mdl-mega-footer">
+          <div class="mdl-mega-footer--top-section">
+            <div class="mdl-mega-footer--left-section">
+            </div>
+            <div class="mdl-mega-footer--right-section">
+              <a class="mdl-typography--font-light" href="#top">
+                Наверх
+                <i class="material-icons">expand_less</i>
+              </a>
+            </div>
+          </div>
+
+          <div class="mdl-mega-footer--middle-section">
+          </div>
+
+          <div class="mdl-mega-footer--bottom-section">
+          </div>
+        </footer>
+      </div>
+    </div>
+    <script src="https://code.getmdl.io/1.3.0/material.min.js"></script>
+    <script src="mdl-jquery-modal-dialog.js"></script>
+    <script type="text/javascript">
+            $('#show-appForParticipation-info').click(function () {
+                showDialog({
+                    text: "info"
+                })
+            });
+            $(".upload-file").change(function(e){
+                var p = $(this).parent().parent();
+                var s = p.children(".upload-textfield");
+                $(s).val(e.target.files[0].name);
+            });
+
+    </script>
+  </body>
+</html>

@@ -1,0 +1,30 @@
+{% extends "registration/base.html" %}
+{% load i18n %}
+
+{% block content %}
+<form method="post" action=".">
+  {% csrf_token %}
+  <h4>Вход</h4>
+  <p>
+      <div class="mdl-textfield mdl-js-textfield">
+        <input  class="mdl-textfield__input" id="{{ form.username.id_for_label }}" maxlength="100" autofocus name="{{ form.username.html_name }}" value="{{ form.username.value | default_if_none:"" }}" required type="text">
+        <label class="mdl-textfield__label" for="{{ form.username.id_for_label }}">Логин...</label>
+        <span class="mdl-textfield__error">Введите логин</span>
+      </div>
+  </p>
+  <p>
+      <div class="mdl-textfield mdl-js-textfield">
+          <input class="mdl-textfield__input" id="{{ form.password.id_for_label }}" maxlength="100" name="{{ form.password.html_name }}" value="{{ form.password.value | default_if_none:"" }}" required type="password">
+          <label class="mdl-textfield__label" for="{{ form.username.id_for_label }}">Пароль...</label>
+          <span class="mdl-textfield__error">Введите пароль</span>
+      </div>
+  </p>
+  <input type="hidden" name="next" value="{{ next }}" />
+  <button class="mdl-button mdl-js-button mdl-button--raised mdl-button--accent" type="submit" name="action">
+    Войти
+  </button>
+</form>
+<p></p>
+<p>{% trans "Забыли пароль" %}? <a href="{% url 'auth_password_reset' %}">Восстановить</a>!</p>
+<p>{% trans "Нет учетной записи" %}? <a href="{% url 'registration_register' %}">Зарегистрироваться</a>!</p>
+{% endblock %}

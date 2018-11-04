@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+
+{% load staticfiles %} <!-- New line -->
+
+<html>
+    <head>
+        <!--Import Google Icon Font-->
+        <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+        <!--Import Google Roboto Font-->
+        <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Roboto:300,400,500,700" type="text/css">
+        <!-- Import material-->
+        <link rel="stylesheet" href="/static/css/material.css">
+        <!-- Import custom-->
+        <link rel="stylesheet" href="/static/css/custom.css">
+        <style>
+            #left-info {
+                float:right;
+                /*width: 20%;*/
+                width: 100%
+                background-color: white;
+                margin-left: -2%;
+                height: 500px;
+                overflow: auto;
+            }
+            #left-content {
+                margin: 10px;
+            }
+            #map {
+                float:left;
+                /*
+                width: 77%;
+                */
+                width: 100%;
+                height: 500px;
+                margin-right: auto;
+            }
+            .row:after {
+                content: "";
+                display: table;
+                clear: both;
+            }
+            .overthrow {
+                overflow: auto;
+                -webkit-overflow-scrolling: touch;
+                z-index: 0
+            }
+            .subblock {
+                margin-left: 1em;
+            }
+
+        </style>
+        <script defer src="/static/js/material.js"></script>
+        <script src="/static/js/overthrow-detect.js"></script>
+        <script src="/static/js/overthrow-polyfill.js"></script>
+        <script src="/static/js/overthrow-toss.js"></script>
+        <script src="/static/js/overthrow-init.js"></script>
+        <script src="https://api-maps.yandex.ru/2.1/?lang=ru_RU&amp;apikey=da7206dc-3691-4c21-ba76-3f02da818f1e" type="text/javascript"></script>
+
+        <script>
+        ymaps.ready(init);
+
+        function init() {
+
+            var data = {{ lab_data|safe }}
+
+            var myMap = new ymaps.Map("map", {
+                    center: [55.76, 37.64],
+                    zoom: 10
+                }, {
+                    searchControlProvider: 'yandex#search'
+                })
+
+            for(index=0; index<data.length; index++)
+            {
+                mark = new ymaps.Placemark(data[index]["geocode"], {
+                    customContent: data[index],
+                    balloonContent: data[index]["base_org_title"] },  {
+                        preset: 'islands#governmentCircleIcon',
+                        iconColor: '#3b5998'
+                    });
+                myMap.geoObjects.add(mark);
+                /*
+                ymaps.domEvent.manager.add(mark, 'click', function (event) {
+                    alert('Hi!'); // click
+                });
+                */
+                var markListener = mark.events.group().add('click', function(e) {
+                      // как только метка добавится на карту, откроем балун и снимем слушателя
+                      var lc = document.getElementById("left-content");
+                      content = e.originalEvent.target.properties._data.customContent;
+                      title = content["base_org_title"]
+                      address = content["base_org_address"];
+                      labs = content["labs"];
+                      lc.innerHTML = '';
+                      lc.innerHTML += '<strong>'+ title   +'</strong>';
+                      lc.innerHTML += '<p>'+ address   +'</p>';
+
+                      lc.innerHTML += '<hr/>'
+                      for(i=0; i<labs.length; i++){
+                          lc.innerHTML += '<p>';
+                          lc.innerHTML += labs[i].title;
+                          lc.innerHTML += '<div class=\'subblock\'><i>' + 'доступные приборы' + '</i>'
+                          devices = labs[i].devices;
+                          for(j=0;j<devices.length;j++){
+                              lc.innerHTML += '<ul><li>'+ devices[i] +'</li></ul>';
+                              break;
+                          }
+                          lc.innerHTML += '<a class=\'subblock\' href=\"\">Запросить исследование</a>';
+                          lc.innerHTML += '</div>'
+                          lc.innerHTML += '</p>';
+                      }
+                   });
+            }
+        }
+        </script>
+        <!--Let browser know website is optimized for mobile-->
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    </head>
+    <body class="main-color main-body">
+        <header>
+            <!-- Logo -->
+            <div class="logo">
+                  <span class="white-font typography--title">V L A B</span>
+            </div>
+            <div class="quick-menu">
+                <!--<div class="quick-button">
+                    <a href="#">о проекте</a>
+                </div>
+                -->
+                <div class="quick-button">
+                    <a href="/user_login">войти</a>
+                </div>
+            </div>
+            <!-- Tabs -->
+            <div class="mdl-tabs tabs mdl-js-tabs mdl-js-ripple-effect">
+              <div class="mdl-tabs__tab-bar white-font">
+                <a href="/" class="mdl-tabs__tab">исследования</a>
+                <a href="/auctions/" class="mdl-tabs__tab">аукционы</a>
+                <a href="/problems/" class="mdl-tabs__tab">вопрос - ответ</a>
+                <a href="/labs/" class="mdl-tabs__tab is-active">лаборатории</a>
+              </div>
+            </div>
+            <!-- about -->
+            <!-- sign-in / sign-up  -->
+        </header>
+        <main class="main-block">
+            <section>
+                <div class="typography--main-caption white-font main-caption">Лаборатории на карте</div>
+            </section>
+            <section class="map-section">
+                <div class="row">
+                    <div id="left-info" class="overthrow">
+                        <div id="left-content" >
+                            Выберите организацию
+                        </div>
+                    </div>
+                    <div id="map">
+                    </div>
+                </div>
+            </section>
+        </main>
+    </body>
+</html>

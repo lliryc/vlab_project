@@ -1,0 +1,28 @@
+<form action="." method="post" enctype="multipart/form-data">
+    <input type="hidden" name="csrfmiddlewaretoken" value="aZ22mc7gIW3CiU3T0h6Jc6wY46u0JnLCWNXWYMCM0OgszQfHjYEv7LrCMwkbI85u">
+    <p class="required"><label class="required" for="id_org">Org:</label> <select name="org" required="" id="id_org">
+  <option value="" selected="">---------</option>
+
+  <option value="2">Org object (2)</option>
+
+</select></p>
+<p class="required"><label class="required" for="id_email">E-mail:</label> <input type="email" name="email" autofocus="" required="" id="id_email"></p>
+<p class="required"><label class="required" for="id_first_name">First name:</label> <input type="text" name="first_name" required="" id="id_first_name"></p>
+<p class="required"><label class="required" for="id_second_name">Second name:</label> <input type="text" name="second_name" required="" id="id_second_name"></p>
+<p class="required"><label class="required" for="id_last_name">Last name:</label> <input type="text" name="last_name" required="" id="id_last_name"></p>
+<p class="required"><label class="required" for="id_img_url">Img url:</label> <input type="file" name="img_url" required="" id="id_img_url"></p>
+<p><label for="id_role_lab">Role lab:</label> <input type="checkbox" name="role_lab" id="id_role_lab"></p>
+<p><label for="id_role_customer">Role customer:</label> <input type="checkbox" name="role_customer" id="id_role_customer" checked=""></p>
+<p class="required"><label class="required" for="id_subrole_customer">Subrole customer:</label> <select name="subrole_customer" required="" id="id_subrole_customer" multiple="multiple">
+  <option value="1">OrgUserRole object (1)</option>
+
+  <option value="2">OrgUserRole object (2)</option>
+
+  <option value="3">OrgUserRole object (3)</option>
+
+</select></p>
+<p class="required"><label class="required" for="id_password1">Password:</label> <input type="password" name="password1" required="" id="id_password1"></p>
+<p class="required"><label class="required" for="id_password2">Repeat password:</label> <input type="password" name="password2" required="" id="id_password2">
+<input type="hidden" name="date_joined" id="id_date_joined"><input type="hidden" name="last_login" id="id_last_login"><input type="hidden" name="verified" id="id_verified"></p>
+    <input type="submit" value="Submit">
+</form>

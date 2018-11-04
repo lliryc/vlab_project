@@ -1,0 +1,251 @@
+<!doctype html>
+{% load staticfiles %}
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
+    <title>VLAB - User test</title>
+
+    <!-- Page styles -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:regular,bold,italic,thin,light,bolditalic,black,medium&amp;lang=en">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <link rel="stylesheet" href="https://code.getmdl.io/1.3.0/material.min.css">
+    <link rel="stylesheet" href="{% static "css/getmdl-select.min.css" %}">
+    <style>
+    /*
+    background
+    */
+    .main-color
+    {
+        background: #00B0F0;
+    }
+    .white-color
+    {
+        background: white;
+    }
+    .white-font
+    {
+        color: white;
+    }
+    .blue-font
+    {
+        color: #00B0F0;
+    }
+    .black-font
+    {
+        color: black;
+    }
+    .mdl-button--file input {
+      cursor: pointer;
+      height: 100%;
+      right: 0;
+      opacity: 0;
+      position: absolute;
+      top: 0;
+      width: 300px;
+      z-index: 4;
+    }
+    .mdl-textfield--file .mdl-textfield__input {
+      box-sizing: border-box;
+      width: calc(100% - 32px);
+    }
+    .mdl-textfield--file .mdl-button--file {
+      right: 0;
+    }
+
+    /*
+    body
+    */
+    .main-body{
+        margin: 2.5em;
+    }
+
+    /*
+    header
+    */
+    .typography--title {
+      font-family: "Roboto", "Helvetica", "Arial", sans-serif;
+      font-size: 24px;
+      font-weight: 500;
+      line-height: 1;
+      letter-spacing: 0.02em;
+    }
+    .logo
+    {
+        display: block;
+        float:left;
+    }
+    /*
+    main
+    */
+    .typography--main-caption {
+        font-family: "Roboto", "Helvetica", "Arial", sans-serif;
+        font-size: 28px;
+        font-weight: 200;
+        line-height: 40px;
+    }
+    .main-caption {
+        align: center;
+        margin-top: 2em;
+        margin-bottom: 2em;
+        text-align: center;
+    }
+    .center-items {
+        justify-content: center;
+    }
+    .accounts-layout__content{
+       max-width: 900px;
+       margin:auto;
+    }
+    /*
+    forms
+    */
+    .reg-form {
+        max-width: 550px;
+        margin: auto;
+        text-align: center;
+    }
+    .form-layout__content {
+        margin-left:auto;
+        margin-right: auto;
+        margin-top: 1em;
+    }
+    </style>
+  </head>
+  <body class="main-color main-body">
+          <div class="mdl-grid accounts-content centered-items">
+                <form class="reg-form mdl-cell mdl-cell--12-col" method="post" action="." enctype="multipart/form-data">
+                  {% csrf_token %}
+                  <h4>Новая организация</h4>
+                  <div class="mdl-card mdl-cell mdl-cell--12-col mdl-shadow--4dp">
+                      <div class="form-layout__content">
+                          <div class="mdl-card__supporting">
+                              Общая информация
+                          </div>
+                          <div class="mdl-textfield mdl-js-textfield">
+                            <input  class="mdl-textfield__input" id="{{ form.name.id_for_label }}" autofocus name="{{ form.name.html_name }}" value="{{ form.name.value | default_if_none:"" }}" type="text" required>
+                            <label class="mdl-textfield__label" for="{{ form.name.id_for_label }}">Название ...</label>
+                            <span class="mdl-textfield__error">Введите название организации</span>
+                          </div>
+                          <div class="mdl-textfield mdl-js-textfield mdl-textfield--file">
+                            <input class="mdl-textfield__input upload-textfield" placeholder="Фото/Логотип..." type="text"  readonly/>
+                            <div class="mdl-button mdl-button--primary mdl-button--icon mdl-button--file">
+                              <i class="material-icons">attach_file</i><input class="upload-file" type="file" id="{{ form.img_url.id_for_label }}" name="{{ form.img_url.html_name }}" value="{{ form.img_url.value | default_if_none:"" }}" accept=".jpg, .jpeg, .png">
+                            </div>
+                          </div>
+                          <div class="mdl-textfield mdl-js-textfield getmdl-select">
+                              <input type="text" class="mdl-textfield__input" id="{{ form.country.id_for_label }}" readonly>
+                              <input type="hidden" name="{{ form.country.html_name }}" value="{{ form.country.value | default_if_none:"" }}">
+                              <label for="{{ form.country.id_for_label }}" class="mdl-textfield__label">Страна...</label>
+                              <ul for="{{ form.country.id_for_label }}" class="mdl-menu mdl-menu--bottom-left mdl-js-menu">
+                                  <li class="mdl-menu__item" data-val="Россия">Россия</li>
+                                  <li class="mdl-menu__item" data-val="Белоруссия">Белоруссия</li>
+                                  <li class="mdl-menu__item" data-val="Казахстан">Казахстан</li>
+                              </ul>
+                          </div>
+                          <div class="mdl-textfield mdl-js-textfield getmdl-select">
+                              <input type="text" class="mdl-textfield__input" id="{{ form.city.id_for_label }}" readonly>
+                              <input type="hidden" value="{{ form.city.value | default_if_none:"" }}" name="{{ form.city.html_name }}">
+                              <label for="{{ form.city.id_for_label }}" class="mdl-textfield__label">Город...</label>
+                              <ul for="{{ form.city.id_for_label }}" class="mdl-menu mdl-menu--bottom-left mdl-js-menu">
+                                  <li class="mdl-menu__item
+                                  {% ifequal form.city.value 'Санкт-Петербург' %}
+                                    selected
+                                   {% endifequal %}
+                                  " data-val="Санкт-Петербург">Санкт-Петербург</li>
+                                  <li class="mdl-menu__item
+                                  {% ifequal form.city.value 'Москва' %}
+                                    selected
+                                   {% endifequal %}
+                                  " data-val="Москва">Москва</li>
+                                  <li class="mdl-menu__item
+                                  {% ifequal form.city.value 'Казань' %}
+                                    selected
+                                  {% endifequal %}
+                                  " data-val="Казань">Казань</li>
+                                  <li class="mdl-menu__item
+                                  {% ifequal form.city.value 'Новосибирск' %}
+                                    selected
+                                  {% endifequal %}
+                                  " data-val="Новосибирск"
+                                  >Новосибирск</li>
+                                  <li class="mdl-menu__item
+                                  {% ifequal form.city.value 'Томск' %}
+                                    selected
+                                  {% endifequal %}
+                                  " data-val="Томск"
+                                  >Томск</li>
+                              </ul>
+                          </div>
+                          <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                              <input class="mdl-textfield__input" type="text" id="{{ form.site.id_for_label }}" name="{{ form.site.html_name }}" value="{{ form.site.value | default_if_none:"" }}">
+                              <label class="mdl-textfield__label" for="{{ form.site.id_for_label }}">Сайт...</label>
+                              <span class="mdl-textfield__error">Введите корректно url</span>
+                          </div>
+                          <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                              <textarea class="mdl-textfield__input" type="text" rows="5" id="{{ form.address.id_for_label }}" name="{{ form.address.html_name }}">{{ form.address.value | default_if_none:"" }}</textarea>
+                              <label class="mdl-textfield__label" for="{{ form.address.id_for_label }}">Aдрес...</label>
+                          </div>
+                      </div>
+                  </div>
+                  <div class="mdl-card mdl-cell mdl-cell--12-col mdl-shadow--4dp">
+                      <div class="form-layout__content">
+                          <div class="mdl-card__supporting">
+                              Контакты
+                          </div>
+                          <div class="mdl-textfield mdl-js-textfield">
+                            <input  class="mdl-textfield__input" id="{{ form.contact_name.id_for_label }}" maxlength="100" name="{{ form.contact_name.html_name }}" value="{{ form.contact_name.value | default_if_none:"" }}" type="text">
+                            <label class="mdl-textfield__label" for="{{ form.contact_name.id_for_label }}">ФИО заведующего лабораторией...</label>
+                            <span class="mdl-textfield__error">Введите ФИО заведующего лабораторией</span>
+                          </div>
+                          <div class="mdl-textfield mdl-js-textfield">
+                            <input  class="mdl-textfield__input" id="{{ form.email.id_for_label }}" maxlength="100" name="{{ form.email.html_name }}" value="{{ form.email.value | default_if_none:"" }}" type="text">
+                            <label class="mdl-textfield__label" for="{{ form.email.id_for_label }}">Email...</label>
+                            <span class="mdl-textfield__error">Введите корректный email</span>
+                          </div>
+
+                          <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                              <input class="mdl-textfield__input" type="text" id="{{ form.phone.id_for_label }}" name="{{ form.phone.html_name }}" value="{{ form.phone.value | default_if_none:"" }}">
+                              <label class="mdl-textfield__label" for="{{ form.phone.id_for_label }}">Телефон...</label>
+                              <span class="mdl-textfield__error">Введите корректный номер телефона</span>
+                          </div>
+                          <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                              <input class="mdl-textfield__input" type="text" id="{{ form.fax.id_for_label }}" name="{{ form.fax.html_name }}" value="{{ form.fax.value | default_if_none:"" }}">
+                              <label class="mdl-textfield__label" for="{{ form.fax.id_for_label }}">Факс...</label>
+                              <span class="mdl-textfield__error">Введите корректный номер факса</span>
+                          </div>
+                          <input type="hidden" name="{{ form.score.html_name}}" value="0">
+                          {{ form.captcha }}
+                      </div>
+                  </div>
+                  <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent" type="submit">
+                      Создать
+                      <span class="mdl-button__ripple-container">
+                          <span class="mdl-ripple"></span>
+                      </span>
+                  </button>
+                  <a class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect" href="/accounts/register">
+                      Назад
+                      <span class="mdl-button__ripple-container">
+                          <span class="mdl-ripple"></span>
+                      </span>
+                  </a>
+                </form>
+
+            <footer id="footer" class="main-color accounts-footer mdl-mega-footer">
+            </footer>
+        </div>
+        <script src="https://code.getmdl.io/1.3.0/material.min.js"></script>
+        <script src="{% static "js/getmdl-select.min.js" %}"></script>
+        <script src="//code.jquery.com/jquery-3.1.1.min.js"></script>
+        <script>
+            $(".upload-file").change(function(e){
+                var p = $(this).parent().parent();
+                var s = p.children(".upload-textfield");
+                $(s).val(e.target.files[0].name);
+            });
+        </script>
+  </body>
+</html>

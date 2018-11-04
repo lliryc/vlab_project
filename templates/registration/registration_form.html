@@ -1,0 +1,106 @@
+{% extends "registration/base.html" %}
+{% load i18n %}
+
+{% block content %}
+</br>
+<form class="reg-form mdl-cell mdl-cell--12-col" method="post" action=".">
+  {% csrf_token %}
+  <div class="mdl-card mdl-cell mdl-cell--12-col mdl-shadow--4dp">
+      <div class="form-layout__content">
+          <div class="mdl-card__supporting">
+              <h4>Ваша учетная запись</h4>
+          </div>
+          <div class="mdl-textfield mdl-js-textfield getmdl-select">
+              <input type="text" value="" class="mdl-textfield__input" id="{{ form.org.id_for_label }}" readonly>
+              <input type="hidden" value="{{ form.org.value | default_if_none:"" }}" name="{{ form.org.html_name }}">
+              <label for="{{ form.org.id_for_label }}" class="mdl-textfield__label">Организация...</label>
+              <ul for="{{ form.org.id_for_label }}" class="mdl-menu mdl-menu--bottom-left mdl-js-menu">
+              {% for val, text in form.org.field.choices %}
+                {% ifnotequal val '' %}
+                  <li class="mdl-menu__item" data-val="{{val}}">{{text}}</li>
+                {% endifnotequal %}
+              {% endfor %}
+              </ul>
+          </div>
+          <div>
+             Не нашли свою организацию?
+                 <a href="/new_organization">Добавить...</a>
+          </div>
+          <div class="mdl-textfield mdl-js-textfield ">
+            <input  class="mdl-textfield__input" id="{{ form.email.id_for_label }}"  autofocus name="{{ form.email.html_name }}" value="{{ form.email.value | default_if_none:"" }}" required type="text">
+            <label class="mdl-textfield__label" for="{{ form.email.id_for_label }}">Электронная почта...</label>
+            <span class="mdl-textfield__error">Введите адрес электронной почты</span>
+          </div>
+          <div class="mdl-textfield mdl-js-textfield ">
+            <input  class="mdl-textfield__input" id="{{ form.first_name.id_for_label }}"  name="{{ form.first_name.html_name }}" value="{{ form.first_name.value | default_if_none:"" }}" required type="text">
+            <label class="mdl-textfield__label" for="{{ form.first_name.id_for_label }}">Имя...</label>
+            <span class="mdl-textfield__error">Введите имя</span>
+          </div>
+          <div class="mdl-textfield mdl-js-textfield ">
+            <input  class="mdl-textfield__input" id="{{ form.second_name.id_for_label }}"  name="{{ form.second_name.html_name }}" value="{{ form.second_name.value | default_if_none:"" }}" type="text">
+            <label class="mdl-textfield__label" for="{{ form.second_name.id_for_label }}">Отчество...</label>
+            <span class="mdl-textfield__error">Введите отчество</span>
+          </div>
+          <div class="mdl-textfield mdl-js-textfield ">
+            <input  class="mdl-textfield__input" id="{{ form.last_name.id_for_label }}"  name="{{ form.last_name.html_name }}" value="{{ form.last_name.value | default_if_none:"" }}" required type="text">
+            <label class="mdl-textfield__label" for="{{ form.last_name.id_for_label }}">Фамилия...</label>
+            <span class="mdl-textfield__error">Введите фамилию</span>
+          </div>
+          <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+              <input id="{{ form.password1.id_for_label }}" class="mdl-textfield__input" type="password" name="{{ form.password1.html_name }}">
+              <label class="mdl-textfield__label" for="{{ form.password1.id_for_label }}">Пароль...</label>
+              <span class="mdl-textfield__error">Введите пароль</span>
+          </div>
+          <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+              <input id="{{ form.password2.id_for_label }}" class="mdl-textfield__input" type="password" name="{{ form.password2.html_name }}">
+              <label class="mdl-textfield__label" for="{{ form.password2.id_for_label }}">Еще раз...</label>
+              <span class="mdl-textfield__error">Введите повторно пароль</span>
+          </div>
+          <p>
+              <label class = "mdl-checkbox mdl-js-checkbox" for = "{{ form.role_lab.id_for_label }}">
+                  <input type = "checkbox" id = "{{ form.role_lab.id_for_label }}" class = "mdl-checkbox__input" name="{{ form.role_lab.html_name }}" checked="{{ form.role_lab.value }}">
+                  <span class = "mdl-checkbox__label">Выполнять исследования</span>
+              </label>
+          </p>
+          <p>
+              <label class = "mdl-checkbox mdl-js-checkbox" for = "{{ form.role_customer.id_for_label }}">
+                  <input type = "checkbox" id = "{{ form.role_customer.id_for_label }}" class = "mdl-checkbox__input" name="{{ form.role_customer.html_name }}" checked="{{ form.role_customer.value }}">
+                  <span class = "mdl-checkbox__label">Заказывать исследования</span>
+              </label>
+              <div class="indent">
+               {% for val, text in form.subrole_customer.field.choices %}
+                 {% ifnotequal val '' %}
+                 <label class = "mdl-checkbox mdl-js-checkbox" for = "{{ val }}">
+                     <input type = "checkbox" id = "{{ val }}" class = "mdl-checkbox__input" name="{{ form.subrole_customer.html_name }}" value="{{ val }}" checked>
+                     <span class = "mdl-checkbox__label">{{ text }}</span>
+                 </label>
+                 {% endifnotequal %}
+               {% endfor %}
+               </div>
+           </p>
+           <p>
+               {{ form.captcha }}
+           </p>
+           <p>
+               {{ form.errors }}
+           </p>
+           <input type="hidden" name="date_joined" id="id_date_joined">
+           <input type="hidden" name="last_login" id="id_last_login">
+           <input type="hidden" name="verified" id="id_verified" value="on">
+       </div>
+        <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent" type="submit">
+        Зарегистрироваться
+        <span class="mdl-button__ripple-container">
+            <span class="mdl-ripple"></span>
+        </span>
+    </button>
+    <a href="/" class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect">
+        Отмена
+        <span class="mdl-button__ripple-container">
+            <span class="mdl-ripple"></span>
+        </span>
+    </a>
+  </div>
+</form>
+
+{% endblock %}

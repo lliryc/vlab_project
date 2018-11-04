@@ -1,0 +1,28 @@
+{% extends 'registration/base.html' %}
+2 {% load staticfiles %}
+3
+4 {% block title_block %}
+5 Register
+6 {% endblock %}
+7
+8 {% block body_block %}
+9 <h1>Register for Rango</h1>
+10 {% if registered %}
+11 Rango says: <strong>thank you for registering!</strong>
+12 <a href="{% url 'index' %}">Return to the homepage.</a><br />
+13 {% else %}
+14 Rango says: <strong>register here!</strong><br />
+15 <form id="user_form" method="post" action="{% url 'register' %}"
+16 enctype="multipart/form-data">
+17
+18 {% csrf_token %}
+19
+20 <!-- Display each form -->
+21 {{ user_form.as_p }}
+22 {{ org_form.as_p }}
+23
+24 <!-- Provide a button to click to submit the form. -->
+25 <input type="submit" name="submit" value="Register" />
+26 </form>
+27 {% endif %}
+28 {% endblock %}
